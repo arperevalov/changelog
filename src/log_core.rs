@@ -1,7 +1,20 @@
 use std::fs::{File, DirBuilder};
 use std::io::prelude::*;
-use serde_json::Value as Json;
+use serde::{Deserialize, Serialize};
 use std::io::Error;
+
+#[derive(Serialize, Deserialize, Debug)]
+pub struct Base {
+    pub app_name: String,
+    pub app_current_version: String,
+    pub app_current_logs: Vec<Log>,
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+pub struct Log {
+    pub group: u64,
+    pub text: String,
+}
 
 pub fn new_directory(directory: String) -> Result<(), String> {
     match std::fs::read_dir(&directory) {
@@ -56,18 +69,23 @@ pub fn read_file() -> Result<String, Error> {
     Ok(data)
 }
 
-pub fn get_json() -> Json {
+pub fn get_json() -> Base {
     let result = read_file().expect("error");
-    serde_json::from_str(&result).expect("Could not read JSON")
+    let data: Base = serde_json::from_str(&result).expect("Could not read JSON");
+    data
 }
 
-pub fn read_value(value: String) {
-    let json: Json = get_json();
-    println!("{}", json[value]);
-}
+pub fn rewrite_file(base: Base) -> Result<(), String> {
+    let mut file = File::create("./.changelog/data.json").expect("something");
 
-pub fn new_record() {
-    let mut json = get_json();
-    json["somesa"] = "sosos".into();
-    println!("{:?}",json);
+    println!("{:#?}", base);
+
+    match serde_json::to_writer_pretty(file, &base) {
+        Ok(..) => Ok(()),
+        Err(error) => {
+            
+    println!("{:#?}", error);
+            Err(String::from("Could not write new data."))
+        }
+    }
 }

@@ -1,4 +1,6 @@
 use std::fs::File;
+
+use log_core::{Base, Log};
 mod log_core;
 
 fn main() {
@@ -6,10 +8,15 @@ fn main() {
     // TODO: --help command
 
     // init();
-    let value = String::from("app_name");
+    
+    // get_current_records();
 
-    log_core::read_value(value);
-    log_core::new_record();
+    let string = String::from("something");
+    new_record(string);
+    
+    // remove_record()
+    
+    // build_report()
 }
 
 fn init() {
@@ -35,19 +42,48 @@ fn init() {
 }
 
 fn get_current_records () {
-    // get_json
-    // get_records
+    let base = log_core::get_json();
+    let logs: Vec<Log> = base.app_current_logs;
+    
+    for item in logs {
+        println!("{}", item.text);
+    }
+}
+
+fn new_record(string: String) {
+    let mut base = log_core::get_json();
+    let mut records: Vec<Log> = base.app_current_logs;
+
+    let new_record = Log {
+        group: 0,
+        text: string
+    };
+
+    records.push(new_record);
+    base.app_current_logs = records;
+
+    log_core::rewrite_file(base).unwrap_or_else(|err| {
+        println!("Problem writing a file: {}", err);
+    });
 }
 
 fn remove_record() {
-    // get_json
-    // get_records
-    // display records with select
-    // remove current record by index
+    let mut base = log_core::get_json();
+    let mut records: Vec<Log> = base.app_current_logs;
+
+    let selection = 2;
+
+    records.remove(selection);
+
+    base.app_current_logs = records;
+
+    log_core::rewrite_file(base).unwrap_or_else(|err| {
+        println!("Problem writing a file: {}", err);
+    });
 }
 
 fn build_report() {
-    // get all current data
+    let base = log_core::get_json();
     // format data
     // create or rewrite file
     // paste data to file
