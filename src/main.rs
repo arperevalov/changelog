@@ -29,16 +29,23 @@ fn init() {
 }
 
 fn new_directory(directory: String) -> Result<(), String> {
-    match DirBuilder::new().create(directory) {
-        Ok(..) => Ok(()),
-        Err(..) => Err(String::from("Could not create directory"))
+    match std::fs::read_dir(&directory) {
+        Ok(..) => {
+            Ok(())
+        },
+        Err(..) => {
+            match DirBuilder::new().create(&directory) {
+                Ok(..) => Ok(()),
+                Err(..) => Err(String::from("Could not create directory. It may already exists!"))
+            }
+        }
     }
 }
 
 fn new_json() -> Result<File, String> {
     match File::create("./.changelog/data.json") {
         Ok(file) => Ok(file),
-        Err(..) => Err(String::from("Could not create directory"))
+        Err(..) => Err(String::from("Could not create file"))
     }
 }
 
@@ -49,7 +56,7 @@ fn write_initial_data(mut file: File) -> Result<(), String> {
 
     match file.write_all(data) {
         Ok(..) => Ok(()),
-        Err(..) => Err(String::from("Could not create directory"))
+        Err(..) => Err(String::from("Could not write initial data."))
     }
 }
 
@@ -62,7 +69,7 @@ fn read_file() -> Result<String, Error> {
 
 fn get_json() -> Json {
     let result = read_file().expect("error");
-    serde_json::from_str(&result).expect("could not read json")
+    serde_json::from_str(&result).expect("Could not read JSON")
 }
 
 fn read_value(value: String) {
