@@ -4,14 +4,20 @@ use serde_json::Value as Json;
 use std::io::Error;
 
 fn main() {
+    // TODO: check if arguments provided
+    // TODO: --help command
+
     init();
     // let value = String::from("somebody");
 
     // read_value(value);
-    // add_note();
+    // new_record();
 }
 
 fn init() {
+    // TODO: ask if should work with git
+    // TODO: ask project name
+
     let directory = String::from("./.changelog/");
 
     new_directory(directory).unwrap_or_else(|err| {
@@ -26,6 +32,47 @@ fn init() {
     write_initial_data(file).unwrap_or_else(|err| {
         println!("Problem writing file: {}", err);
     });
+
+    // TODO: print instruction how to use after init
+}
+
+fn get_current_records () {
+    // get_json
+    // get_records
+}
+
+fn new_record() {
+    let mut json = get_json();
+    json["somesa"] = "sosos".into();
+    println!("{:?}",json);
+}
+
+fn remove_record() {
+    // get_json
+    // get_records
+    // display records with select
+    // remove current record by index
+}
+
+fn build_report() {
+    // get all current data
+    // format data
+    // create or rewrite file
+    // paste data to file
+}
+
+fn build_report_with_commits() {
+    // get all versions data
+    // format data
+    // create or rewrite file
+    // paste data to file
+}
+
+fn build_report_with_version() {
+    // get all version data
+    // format data
+    // create or rewrite file
+    // paste data to file
 }
 
 fn new_directory(directory: String) -> Result<(), String> {
@@ -51,7 +98,20 @@ fn new_json() -> Result<File, String> {
 
 fn write_initial_data(mut file: File) -> Result<(), String> {
     let data = b"{
-    \"somebody\": \"once told me\"
+    \"app_name\": \"app_name\",
+    \"app_current_version\": \"0.01\",
+    \"app_current_logs\": [
+        {
+            \"group\": 0,
+            \"text\": \"Rule of cool\"
+        }
+    ],
+    \"app_previous\": {
+        \"0.00\": {
+            \"logs\": [],
+            \"commits\": []
+        }
+    }
 }";
 
     match file.write_all(data) {
@@ -75,10 +135,4 @@ fn get_json() -> Json {
 fn read_value(value: String) {
     let json: Json = get_json();
     println!("{}", json[value]);
-}
-
-fn add_note() {
-    let mut json = get_json();
-    json["somesa"] = "sosos".into();
-    println!("{:?}",json);
 }
