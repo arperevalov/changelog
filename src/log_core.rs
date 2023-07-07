@@ -76,7 +76,7 @@ pub fn get_json() -> Base {
 }
 
 pub fn rewrite_file(base: Base) -> Result<(), String> {
-    let mut file = File::create("./.changelog/data.json").expect("something");
+    let file = File::create("./.changelog/data.json").expect("something");
 
     println!("{:#?}", base);
 

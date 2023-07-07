@@ -1,22 +1,44 @@
 use std::fs::File;
+use std::env;
 
-use log_core::{Base, Log};
+use log_core::{Log};
 mod log_core;
 
-fn main() {
-    // TODO: check if arguments provided
+fn main() -> Result<(), String> {
+    let args: Vec<String> = env::args().collect();
+
+    if args.len() < 2 {
+        let error = String::from(format!("Provided {} instead of 1", args.len() - 1 ));
+        return Err(error)
+    }
+
+    match args[1].as_str() {
+        "i" => {
+            init();
+        },
+        "g" => {
+            get_current_records();
+        },
+        "n" => {
+            if args.len() > 2 {
+                let string = String::from(&args[2]);
+                println!("{:?}", string);
+                new_record(string);
+            }
+        },
+        "r" => {
+            let index = 0;
+            remove_record(index)
+        },
+        &_ => {
+        }
+    }
+
     // TODO: --help command
-
-    // init();
-    
-    // get_current_records();
-
-    let string = String::from("something");
-    new_record(string);
-    
-    // remove_record()
-    
+   
     // build_report()
+
+    Ok(())
 }
 
 fn init() {
@@ -67,13 +89,12 @@ fn new_record(string: String) {
     });
 }
 
-fn remove_record() {
+fn remove_record(index: usize) {
     let mut base = log_core::get_json();
     let mut records: Vec<Log> = base.app_current_logs;
 
-    let selection = 2;
 
-    records.remove(selection);
+    records.remove(index);
 
     base.app_current_logs = records;
 
@@ -82,23 +103,23 @@ fn remove_record() {
     });
 }
 
-fn build_report() {
-    let base = log_core::get_json();
-    // format data
-    // create or rewrite file
-    // paste data to file
-}
+// fn build_report() {
+//     let base = log_core::get_json();
+//     // format data
+//     // create or rewrite file
+//     // paste data to file
+// }
 
-fn build_report_with_commits() {
-    // get all versions data
-    // format data
-    // create or rewrite file
-    // paste data to file
-}
+// fn build_report_with_commits() {
+//     // get all versions data
+//     // format data
+//     // create or rewrite file
+//     // paste data to file
+// }
 
-fn build_report_with_version() {
-    // get all version data
-    // format data
-    // create or rewrite file
-    // paste data to file
-}
+// fn build_report_with_version() {
+//     // get all version data
+//     // format data
+//     // create or rewrite file
+//     // paste data to file
+// }
