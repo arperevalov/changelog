@@ -1,6 +1,5 @@
 use std::fs::{File, DirBuilder};
 use std::io::prelude::*;
-use std::path;
 use serde::{Deserialize, Serialize};
 use std::io::Error;
 
