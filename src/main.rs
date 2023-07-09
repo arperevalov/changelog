@@ -1,6 +1,7 @@
 use std::fs::{File, self};
 use std::env;
 
+use dialoguer::{console::Term, theme::ColorfulTheme, Select};
 use log_core::{Log};
 mod log_core;
 
@@ -27,8 +28,7 @@ fn main() -> Result<(), String> {
             }
         },
         "remove" => {
-            let index = 0;
-            remove_record(index)
+            remove_record()
         },
         "build" => {
             build_report()
@@ -93,13 +93,28 @@ fn new_record(string: String) {
     });
 }
 
-fn remove_record(index: usize) {
+fn remove_record() {
     let file_path = "./.changelog/data.json";
     let mut base = log_core::get_json();
     let mut records: Vec<Log> = base.app_current_logs;
 
+    let mut values = vec![];
 
-    records.remove(index);
+    for record in &records {
+        let text = String::from(&record.text);
+        values.push(text);
+    }
+
+    let selection = Select::with_theme(&ColorfulTheme::default())
+        .items(&values)
+        .default(0)
+        .interact_on_opt(&Term::stderr()).unwrap();
+
+    match selection {
+        Some(index) => {records.remove(index);},
+        None => println!("User did not select anything"),
+        _ => println!("User did not select anything")
+    }
 
     base.app_current_logs = records;
 
