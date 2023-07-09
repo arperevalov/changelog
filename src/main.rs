@@ -144,9 +144,8 @@ fn build_report() {
         println!("Problem creating reports directory: {}", err);
     }) ;
 
-    let file_path = "./.changelog/reports/_current.txt";
-
     let base = log_core::get_json();
+    let file_path = format!("./.changelog/reports/{}.txt", &base.app_current_version);
     let mut logs_string = String::new();
 
     for item in &base.app_current_logs {
