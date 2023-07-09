@@ -28,7 +28,11 @@ fn main() -> Result<(), String> {
             }
         },
         "remove" => {
-            remove_record()
+            if args.len() > 2 {
+                remove_record(Some(String::from(&args[2])));   
+            } else {
+                remove_record(None);
+            }
         },
         "build" => {
             build_report()
@@ -93,27 +97,37 @@ fn new_record(string: String) {
     });
 }
 
-fn remove_record() {
+fn remove_record(index: Option<String>) {
     let file_path = "./.changelog/data.json";
     let mut base = log_core::get_json();
     let mut records: Vec<Log> = base.app_current_logs;
 
-    let mut values = vec![];
+    match index {
+        Some(index) => {
+            let id:usize = index.parse().expect("Give number");
+            records.remove(id);
+        },
+        None => {
+            let mut values = vec![];
 
-    for record in &records {
-        let text = String::from(&record.text);
-        values.push(text);
-    }
 
-    let selection = Select::with_theme(&ColorfulTheme::default())
-        .items(&values)
-        .default(0)
-        .interact_on_opt(&Term::stderr()).unwrap();
+            for record in &records {
+                println!("{}", &record.text);
+                let text = String::from(&record.text);
+                values.push(text);
+            }
 
-    match selection {
-        Some(index) => {records.remove(index);},
-        None => println!("User did not select anything"),
-        _ => println!("User did not select anything")
+            let selection = Select::with_theme(&ColorfulTheme::default())
+                .items(&values)
+                .default(0)
+                .interact_on_opt(&Term::stderr()).unwrap();
+
+            match selection {
+                Some(index) => {records.remove(index);},
+                None => println!("User did not select anything"),
+                _ => println!("User did not select anything")
+            }
+        }
     }
 
     base.app_current_logs = records;
