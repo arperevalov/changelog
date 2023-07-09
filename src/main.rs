@@ -121,12 +121,12 @@ fn build_report() {
     let mut logs_string = String::new();
 
     for item in &base.app_current_logs {
-        logs_string = logs_string + "\n" + &item.text;
+        logs_string = logs_string + "\n— " + &item.text;
     }
         
     let report = format!(
 "{}, {}
-logs: {}", 
+Changes of this version: {}", 
     base.app_name, base.app_current_version, logs_string);
 
     let data = String::from(report);
