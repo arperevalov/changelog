@@ -13,24 +13,24 @@ fn main() -> Result<(), String> {
     }
 
     match args[1].as_str() {
-        "i" => {
+        "init" => {
             init();
         },
-        "g" => {
+        "get" => {
             get_current_records();
         },
-        "n" => {
+        "new" => {
             if args.len() > 2 {
                 let string = String::from(&args[2]);
                 println!("{:?}", string);
                 new_record(string);
             }
         },
-        "r" => {
+        "remove" => {
             let index = 0;
             remove_record(index)
         },
-        "b" => {
+        "build" => {
             build_report()
         }
         &_ => {
