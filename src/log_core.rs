@@ -78,8 +78,6 @@ pub fn get_json() -> Base {
 pub fn rewrite_file(path: &str, data: Base) -> Result<(), String> {
     let file = File::create(path).expect("something");
 
-    println!("{:#?}", data);
-
     match serde_json::to_writer_pretty(file, &data) {
         Ok(..) => Ok(()),
         Err(error) => {
