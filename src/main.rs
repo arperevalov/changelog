@@ -30,6 +30,9 @@ fn main() -> Result<(), String> {
             let index = 0;
             remove_record(index)
         },
+        "b" => {
+            build_report()
+        }
         &_ => {
         }
     }
@@ -73,6 +76,7 @@ fn get_current_records () {
 }
 
 fn new_record(string: String) {
+    let file_path = "./.changelog/data.json";
     let mut base = log_core::get_json();
     let mut records: Vec<Log> = base.app_current_logs;
 
@@ -84,12 +88,13 @@ fn new_record(string: String) {
     records.push(new_record);
     base.app_current_logs = records;
 
-    log_core::rewrite_file(base).unwrap_or_else(|err| {
+    log_core::rewrite_file(file_path, base).unwrap_or_else(|err| {
         println!("Problem writing a file: {}", err);
     });
 }
 
 fn remove_record(index: usize) {
+    let file_path = "./.changelog/data.json";
     let mut base = log_core::get_json();
     let mut records: Vec<Log> = base.app_current_logs;
 
@@ -98,17 +103,34 @@ fn remove_record(index: usize) {
 
     base.app_current_logs = records;
 
-    log_core::rewrite_file(base).unwrap_or_else(|err| {
+    log_core::rewrite_file(file_path, base).unwrap_or_else(|err| {
         println!("Problem writing a file: {}", err);
     });
 }
 
-// fn build_report() {
-//     let base = log_core::get_json();
-//     // format data
-//     // create or rewrite file
-//     // paste data to file
-// }
+fn build_report() {
+    let directory = String::from("./.changelog/reports");
+
+    log_core::new_directory(directory).unwrap_or_else(|err| {
+        println!("Problem creating reports directory: {}", err);
+    }) ;
+
+    let base = log_core::get_json();
+    let mut logs_string = String::new();
+
+    for item in &base.app_current_logs {
+        logs_string += &item.text;
+    }
+        
+    let report = format!(
+"{}, {}
+logs: {}", 
+    base.app_name, base.app_current_version, logs_string);
+
+    println!("{}", report);
+    // create or rewrite file
+    // paste data to file
+}
 
 // fn build_report_with_commits() {
 //     // get all versions data

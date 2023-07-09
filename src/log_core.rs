@@ -1,5 +1,6 @@
 use std::fs::{File, DirBuilder};
 use std::io::prelude::*;
+use std::path;
 use serde::{Deserialize, Serialize};
 use std::io::Error;
 
@@ -75,8 +76,8 @@ pub fn get_json() -> Base {
     data
 }
 
-pub fn rewrite_file(base: Base) -> Result<(), String> {
-    let file = File::create("./.changelog/data.json").expect("something");
+pub fn rewrite_file(path: &str, base: Base) -> Result<(), String> {
+    let file = File::create(path).expect("something");
 
     println!("{:#?}", base);
 
