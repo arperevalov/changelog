@@ -1,1 +1,3 @@
-"\"app_name, 0.01\\nlogs: \\nRule of cool\""
+app_name, 0.01
+logs: 
+Rule of cool

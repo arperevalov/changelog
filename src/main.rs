@@ -1,4 +1,4 @@
-use std::fs::File;
+use std::fs::{File, self};
 use std::env;
 
 use log_core::{Log};
@@ -88,9 +88,7 @@ fn new_record(string: String) {
     records.push(new_record);
     base.app_current_logs = records;
 
-    let data = serde_json::to_string_pretty(&base).unwrap();
-
-    log_core::rewrite_file(file_path, data).unwrap_or_else(|err| {
+    log_core::rewrite_file(file_path, base).unwrap_or_else(|err| {
         println!("Problem writing a file: {}", err);
     });
 }
@@ -105,9 +103,7 @@ fn remove_record(index: usize) {
 
     base.app_current_logs = records;
 
-    let data = serde_json::to_string_pretty(&base).unwrap();
-
-    log_core::rewrite_file(file_path, data).unwrap_or_else(|err| {
+    log_core::rewrite_file(file_path, base).unwrap_or_else(|err| {
         println!("Problem writing a file: {}", err);
     });
 }
@@ -133,11 +129,9 @@ fn build_report() {
 logs: {}", 
     base.app_name, base.app_current_version, logs_string);
 
-    let data = serde_json::to_string_pretty(&report).unwrap();
+    let data = String::from(report);
 
-    log_core::rewrite_file(file_path, data).unwrap_or_else(|err| {
-        println!("Problem writing a file: {}", err);
-    });
+    fs::write(file_path, data).expect("Unable to write file");
 }
 
 // fn build_report_with_commits() {

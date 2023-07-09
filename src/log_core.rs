@@ -75,7 +75,7 @@ pub fn get_json() -> Base {
     data
 }
 
-pub fn rewrite_file(path: &str, data: String) -> Result<(), String> {
+pub fn rewrite_file(path: &str, data: Base) -> Result<(), String> {
     let file = File::create(path).expect("something");
 
     println!("{:#?}", data);
