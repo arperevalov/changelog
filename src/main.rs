@@ -88,7 +88,9 @@ fn new_record(string: String) {
     records.push(new_record);
     base.app_current_logs = records;
 
-    log_core::rewrite_file(file_path, base).unwrap_or_else(|err| {
+    let data = serde_json::to_string_pretty(&base).unwrap();
+
+    log_core::rewrite_file(file_path, data).unwrap_or_else(|err| {
         println!("Problem writing a file: {}", err);
     });
 }
@@ -103,7 +105,9 @@ fn remove_record(index: usize) {
 
     base.app_current_logs = records;
 
-    log_core::rewrite_file(file_path, base).unwrap_or_else(|err| {
+    let data = serde_json::to_string_pretty(&base).unwrap();
+
+    log_core::rewrite_file(file_path, data).unwrap_or_else(|err| {
         println!("Problem writing a file: {}", err);
     });
 }
@@ -114,6 +118,8 @@ fn build_report() {
     log_core::new_directory(directory).unwrap_or_else(|err| {
         println!("Problem creating reports directory: {}", err);
     }) ;
+
+    let file_path = "./.changelog/reports/_current.txt";
 
     let base = log_core::get_json();
     let mut logs_string = String::new();
@@ -127,9 +133,11 @@ fn build_report() {
 logs: {}", 
     base.app_name, base.app_current_version, logs_string);
 
-    println!("{}", report);
-    // create or rewrite file
-    // paste data to file
+    let data = serde_json::to_string_pretty(&report).unwrap();
+
+    log_core::rewrite_file(file_path, data).unwrap_or_else(|err| {
+        println!("Problem writing a file: {}", err);
+    });
 }
 
 // fn build_report_with_commits() {
