@@ -102,6 +102,10 @@ fn remove_record(index: Option<String>) {
     let mut base = log_core::get_json();
     let mut records: Vec<Log> = base.app_current_logs;
 
+    if records.len() == 0 {
+        return println!("No records to remove");
+    }
+
     match index {
         Some(index) => {
             let id:usize = index.parse().expect("Give number");
