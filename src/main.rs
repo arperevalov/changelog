@@ -119,7 +119,7 @@ fn build_report() {
     let mut logs_string = String::new();
 
     for item in &base.app_current_logs {
-        logs_string += &item.text;
+        logs_string = logs_string + "\n" + &item.text;
     }
         
     let report = format!(
