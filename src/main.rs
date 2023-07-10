@@ -9,7 +9,7 @@ fn main() -> Result<(), String> {
     let args: Vec<String> = env::args().collect();
 
     if args.len() < 2 {
-        let error = String::from(format!("Provided {} instead of 1", args.len() - 1 ));
+        let error = String::from("Provided no arguments");
         return Err(error)
     }
 
@@ -133,8 +133,7 @@ fn remove_record(index: Option<String>) {
 
             match selection {
                 Some(index) => {records.remove(index);},
-                None => println!("User did not select anything"),
-                _ => println!("User did not select anything")
+                None => println!("User did not select anything")
             }
         }
     }
