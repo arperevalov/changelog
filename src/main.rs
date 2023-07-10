@@ -35,7 +35,12 @@ fn main() -> Result<(), String> {
             }
         },
         "build" => {
-            build_report()
+            if args.len() > 2 {
+                let version = String::from(&args[2]);
+                build_report_with_version(version);
+            } else {
+                build_report()
+            }
         },
         "release" => {
             release()
@@ -163,6 +168,7 @@ fn build_report() {
         
     let report = format!(
 "{}, {}
+
 Changes of this version: {}", 
     base.app_name, base.app_current_version, logs_string);
 
@@ -206,9 +212,39 @@ fn release() {
 //     // paste data to file
 // }
 
-// fn build_report_with_version() {
-//     // get all version data
-//     // format data
-//     // create or rewrite file
-//     // paste data to file
-// }
+fn build_report_with_version(version: String) {
+    let directory = String::from("./.changelog/reports");
+
+    log_core::new_directory(directory).unwrap_or_else(|err| {
+        println!("Problem creating reports directory: {}", err);
+    }) ;
+
+    let base = log_core::get_json();
+    let file_path = format!("./.changelog/reports/{}.txt", &version);
+    let previous_records = base.app_previous;
+    let record = previous_records.get(&version).expect("No releases with this version found");
+
+    let mut logs_string = String::new();
+
+    for log in &record.logs {
+        logs_string = logs_string + "\n— " + &log.text;
+    }
+
+    let mut commits_string = String::new();
+
+    for commit in &record.commits {
+        commits_string = commits_string + "\n— " + &commit;
+    }
+
+    let report = format!(
+"{}, {}
+
+Changes of this version: {}
+
+With commits: {}", 
+    base.app_name, version, logs_string, commits_string);
+
+    let data = String::from(report);
+
+    fs::write(file_path, data).expect("Unable to write file");
+}
