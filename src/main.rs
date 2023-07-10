@@ -73,6 +73,10 @@ fn init() {
         println!("Problem writing file: {}", err);
     });
 
+    let file_path = String::from("./.changelog/.gitignore");
+    let data = "/reports";
+
+    fs::write(file_path, data).expect("Unable to write .gitignore");
     // TODO: print instruction how to use after init
 }
 

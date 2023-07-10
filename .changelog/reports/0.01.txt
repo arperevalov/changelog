@@ -1,3 +1,0 @@
-app_name, 0.01
-Changes of this version: 
-— Rule of cool
