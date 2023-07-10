@@ -1,3 +1,4 @@
+use std::collections::HashMap;
 use std::fs::{File, DirBuilder};
 use std::io::prelude::*;
 use serde::{Deserialize, Serialize};
@@ -8,12 +9,19 @@ pub struct Base {
     pub app_name: String,
     pub app_current_version: String,
     pub app_current_logs: Vec<Log>,
+    pub app_previous: HashMap<String, LogArchive>
 }
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Log {
     pub group: u64,
     pub text: String,
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+pub struct LogArchive {
+    pub logs: Vec<Log>,
+    pub commits: Vec<String>,
 }
 
 pub fn new_directory(directory: String) -> Result<(), String> {

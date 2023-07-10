@@ -1,8 +1,8 @@
 use std::fs::{File, self};
-use std::env;
+use std::{env, vec};
 
 use dialoguer::{console::Term, theme::ColorfulTheme, Select};
-use log_core::{Log};
+use log_core::{Log, LogArchive, Base};
 mod log_core;
 
 fn main() -> Result<(), String> {
@@ -36,14 +36,15 @@ fn main() -> Result<(), String> {
         },
         "build" => {
             build_report()
+        },
+        "release" => {
+            release()
         }
         &_ => {
         }
     }
 
     // TODO: --help command
-   
-    // build_report()
 
     Ok(())
 }
@@ -168,6 +169,34 @@ Changes of this version: {}",
     let data = String::from(report);
 
     fs::write(file_path, data).expect("Unable to write file");
+}
+
+fn release() {
+    let file_path = "./.changelog/data.json";
+    let base = log_core::get_json();
+    let records: Vec<Log> = base.app_current_logs;
+
+    let mut commits = vec![];
+    commits.push(String::from("some_string"));
+
+    let mut version:f64 = base.app_current_version.parse().expect("cannot parse app current version");
+    version += 0.01;
+
+    let current_archive: LogArchive = LogArchive { logs: records, commits };
+
+    let mut previous_records = base.app_previous;
+    previous_records.insert(base.app_current_version, current_archive);
+
+    let new_base = Base {
+        app_current_logs: vec![],
+        app_name: base.app_name,
+        app_current_version: version.to_string(),
+        app_previous: previous_records
+    };
+
+    log_core::rewrite_file(file_path, new_base).unwrap_or_else(|err| {
+        println!("Problem writing a file: {}", err);
+    });
 }
 
 // fn build_report_with_commits() {
