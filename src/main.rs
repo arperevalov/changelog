@@ -1,5 +1,5 @@
 use std::fs::{File, self};
-use std::{env, vec};
+use std::{env, vec, io};
 
 use dialoguer::{console::Term, theme::ColorfulTheme, Select};
 use log_core::{Log, LogArchive, Base};
@@ -25,6 +25,13 @@ fn main() -> Result<(), String> {
                 let string = String::from(&args[2]);
                 println!("{:?}", string);
                 new_record(string);
+            }
+        },
+        "update" => {
+            if args.len() > 2 {
+                update_record(Some(String::from(&args[2])));   
+            } else {
+                update_record(None);
             }
         },
         "remove" => {
@@ -105,6 +112,61 @@ fn new_record(string: String) {
     };
 
     records.push(new_record);
+    base.app_current_logs = records;
+
+    log_core::rewrite_file(file_path, base).unwrap_or_else(|err| {
+        println!("Problem writing a file: {}", err);
+    });
+}
+
+fn update_record(index: Option<String>) {
+    let file_path = "./.changelog/data.json";
+    let mut base = log_core::get_json();
+    let mut records: Vec<Log> = base.app_current_logs;
+
+    if records.len() == 0 {
+        return println!("No records to update");
+    }
+
+    let id:Result<usize, &str> = match index {
+        Some(index) => {
+            let id:usize = index.parse().expect("Give number");
+            Ok(id)
+        },
+        None => {
+            let mut values = vec![];
+
+            for record in &records {
+                println!("{}", &record.text);
+                let text = String::from(&record.text);
+                values.push(text);
+            }
+
+            let selection = Select::with_theme(&ColorfulTheme::default())
+                .items(&values)
+                .default(0)
+                .interact_on_opt(&Term::stderr()).unwrap();
+
+            match selection {
+                Some(index) => {Ok(index)},
+                None => {Err("User did not select anything")}
+            }
+        }
+    };
+
+    let id = id.unwrap();
+
+    if records.len() <= id {
+        println!("There are no records with id of {}", id);
+        return;
+    }
+    
+    println!("Please provide new text for record");
+    let mut new_value = String::new();
+    io::stdin().read_line(&mut new_value).unwrap();
+
+    records[id].text = new_value.trim().to_string();
+
     base.app_current_logs = records;
 
     log_core::rewrite_file(file_path, base).unwrap_or_else(|err| {
