@@ -1,7 +1,7 @@
 use std::fs::{File, self};
-use std::{env, vec, io};
+use std::{env, vec};
 
-use dialoguer::{console::Term, theme::ColorfulTheme, Select};
+use dialoguer::{console::Term, theme::ColorfulTheme, Select, Input};
 use log_core::{Log, LogArchive, Base};
 mod log_core;
 
@@ -160,12 +160,13 @@ fn update_record(index: Option<String>) {
         println!("There are no records with id of {}", id);
         return;
     }
-    
-    println!("Please provide new text for record");
-    let mut new_value = String::new();
-    io::stdin().read_line(&mut new_value).unwrap();
 
-    records[id].text = new_value.trim().to_string();
+    let input: String = Input::new()
+        .with_prompt("Please provide new text for record\n")
+        .with_initial_text(&records[id].text)
+        .interact_text().unwrap();
+
+    records[id].text = input.to_string();
 
     base.app_current_logs = records;
 
