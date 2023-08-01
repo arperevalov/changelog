@@ -255,6 +255,8 @@ fn release() {
     let base = log_core::get_base();
     let records: Vec<Log> = base.app_current_logs;
 
+    build_report();
+
     let mut commits = vec![];
     commits.push(String::from("some_string"));
 
