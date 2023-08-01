@@ -71,12 +71,13 @@ fn init() {
     // TODO: ask project name
 
     let directory = String::from(APP_DIRECTORY);
+    let file_name = String::from(APP_DIRECTORY) + &String::from(APP_DB_NAME);
 
     log_core::new_directory(&directory).unwrap_or_else(|err| {
         println!("Problem creating directory: {}", err);
     }) ;
 
-    let file = log_core::new_json().unwrap_or_else(|err| {
+    let file = log_core::new_json(&file_name).unwrap_or_else(|err| {
         println!("Problem creating file: {}", err);
         File::open("/dev/null").expect("Failed to open /dev/null")
     });
@@ -93,7 +94,7 @@ fn init() {
 }
 
 fn get_current_records () {
-    let base = log_core::get_json();
+    let base = log_core::get_base();
     let logs: Vec<Log> = base.app_current_logs;
     
     if logs.len() == 0 {
@@ -107,8 +108,8 @@ fn get_current_records () {
 }
 
 fn new_record(string: String) {
-    let file_path = String::from(APP_DIRECTORY) + &String::from(APP_DB_NAME);
-    let mut base = log_core::get_json();
+    let file_path: String = String::from(APP_DIRECTORY) + &String::from(APP_DB_NAME);
+    let mut base = log_core::get_base();
     let mut records: Vec<Log> = base.app_current_logs;
 
     let new_record = Log {
@@ -125,8 +126,8 @@ fn new_record(string: String) {
 }
 
 fn update_record(index: Option<String>) {
-    let file_path = String::from(APP_DIRECTORY) + &String::from(APP_DB_NAME);
-    let mut base = log_core::get_json();
+    let file_path: String = String::from(APP_DIRECTORY) + &String::from(APP_DB_NAME);
+    let mut base = log_core::get_base();
     let mut records: Vec<Log> = base.app_current_logs;
 
     if records.len() == 0 {
@@ -181,8 +182,8 @@ fn update_record(index: Option<String>) {
 }
 
 fn remove_record(index: Option<String>) {
-    let file_path = String::from(APP_DIRECTORY) + &String::from(APP_DB_NAME);
-    let mut base = log_core::get_json();
+    let file_path: String = String::from(APP_DIRECTORY) + &String::from(APP_DB_NAME);
+    let mut base = log_core::get_base();
     let mut records: Vec<Log> = base.app_current_logs;
 
     if records.len() == 0 {
@@ -224,13 +225,13 @@ fn remove_record(index: Option<String>) {
 }
 
 fn build_report() {
-    let directory = String::from(APP_DIRECTORY) + &String::from(APP_DIRECTORY_REPORTS);
+    let directory: String = String::from(APP_DIRECTORY) + &String::from(APP_DIRECTORY_REPORTS);
 
     log_core::new_directory(&directory).unwrap_or_else(|err| {
         println!("Problem creating reports directory: {}", err);
     }) ;
 
-    let base = log_core::get_json();
+    let base = log_core::get_base();
     let file_path = format!("{}{}.txt",&directory, &base.app_current_version);
     let mut logs_string = String::new();
 
@@ -250,8 +251,8 @@ Changes of this version: {}",
 }
 
 fn release() {
-    let file_path = String::from(APP_DIRECTORY) + &String::from(APP_DB_NAME);
-    let base = log_core::get_json();
+    let file_path: String = String::from(APP_DIRECTORY) + &String::from(APP_DB_NAME);
+    let base = log_core::get_base();
     let records: Vec<Log> = base.app_current_logs;
 
     let mut commits = vec![];
@@ -278,13 +279,13 @@ fn release() {
 }
 
 fn build_report_with_version(version: String) {
-    let directory = String::from(APP_DIRECTORY) + &String::from(APP_DIRECTORY_REPORTS);
+    let directory: String = String::from(APP_DIRECTORY) + &String::from(APP_DIRECTORY_REPORTS);
 
     log_core::new_directory(&directory).unwrap_or_else(|err| {
         println!("Problem creating reports directory: {}", err);
     }) ;
 
-    let base = log_core::get_json();
+    let base = log_core::get_base();
     let file_path = format!("{}{}.txt",&directory, &version);
     let previous_records = base.app_previous;
     let record = previous_records.get(&version).expect("No releases with this version found");

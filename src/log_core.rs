@@ -4,6 +4,8 @@ use std::io::prelude::*;
 use serde::{Deserialize, Serialize};
 use std::io::Error;
 
+use crate::{APP_DIRECTORY, APP_DB_NAME};
+
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Base {
     pub app_name: String,
@@ -24,13 +26,13 @@ pub struct LogArchive {
     pub commits: Vec<String>,
 }
 
-pub fn new_directory(directory: &String) -> Result<(), String> {
-    match std::fs::read_dir(&directory) {
+pub fn new_directory(path: &String) -> Result<(), String> {
+    match std::fs::read_dir(&path) {
         Ok(..) => {
             Ok(())
         },
         Err(..) => {
-            match DirBuilder::new().create(&directory) {
+            match DirBuilder::new().create(&path) {
                 Ok(..) => Ok(()),
                 Err(..) => Err(String::from("Could not create directory. It may already exists!"))
             }
@@ -39,8 +41,8 @@ pub fn new_directory(directory: &String) -> Result<(), String> {
 }
 
 
-pub fn new_json() -> Result<File, String> {
-    match File::create("./.changelog/data.json") {
+pub fn new_json(path: &String) -> Result<File, String> {
+    match File::create(path) {
         Ok(file) => Ok(file),
         Err(..) => Err(String::from("Could not create file"))
     }
@@ -70,15 +72,16 @@ pub fn write_initial_data(mut file: File) -> Result<(), String> {
     }
 }
 
-pub fn read_file() -> Result<String, Error> {
-    let mut file = File::open("./.changelog/data.json")?;
+pub fn read_file(path: &String) -> Result<String, Error> {
+    let mut file = File::open(path)?;
     let mut data = String::new();
     file.read_to_string(&mut data)?;
     Ok(data)
 }
 
-pub fn get_json() -> Base {
-    let result = read_file().expect("error");
+pub fn get_base() -> Base {
+    let base_path: String = String::from(APP_DIRECTORY) + &String::from(APP_DB_NAME);
+    let result = read_file(&base_path).expect("error");
     let data: Base = serde_json::from_str(&result).expect("Could not read JSON");
     data
 }
