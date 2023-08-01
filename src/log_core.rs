@@ -24,7 +24,7 @@ pub struct LogArchive {
     pub commits: Vec<String>,
 }
 
-pub fn new_directory(directory: String) -> Result<(), String> {
+pub fn new_directory(directory: &String) -> Result<(), String> {
     match std::fs::read_dir(&directory) {
         Ok(..) => {
             Ok(())
@@ -83,7 +83,7 @@ pub fn get_json() -> Base {
     data
 }
 
-pub fn rewrite_file(path: &str, data: Base) -> Result<(), String> {
+pub fn rewrite_file(path: String, data: Base) -> Result<(), String> {
     let file = File::create(path).expect("something");
 
     match serde_json::to_writer_pretty(file, &data) {

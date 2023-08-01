@@ -5,6 +5,11 @@ use dialoguer::{console::Term, theme::ColorfulTheme, Select, Input};
 use log_core::{Log, LogArchive, Base};
 mod log_core;
 
+
+const APP_DIRECTORY: &str = "./.changelog/";
+const APP_DIRECTORY_REPORTS: &str = "reports/";
+const APP_DB_NAME: &str = "data.json";
+
 fn main() -> Result<(), String> {
     let args: Vec<String> = env::args().collect();
 
@@ -65,9 +70,9 @@ fn init() {
     // TODO: ask if should work with git
     // TODO: ask project name
 
-    let directory = String::from("./.changelog/");
+    let directory = String::from(APP_DIRECTORY);
 
-    log_core::new_directory(directory).unwrap_or_else(|err| {
+    log_core::new_directory(&directory).unwrap_or_else(|err| {
         println!("Problem creating directory: {}", err);
     }) ;
 
@@ -80,7 +85,7 @@ fn init() {
         println!("Problem writing file: {}", err);
     });
 
-    let file_path = String::from("./.changelog/.gitignore");
+    let file_path = String::from(APP_DIRECTORY) + &String::from(".gitignore");
     let data = "/reports";
 
     fs::write(file_path, data).expect("Unable to write .gitignore");
@@ -102,7 +107,7 @@ fn get_current_records () {
 }
 
 fn new_record(string: String) {
-    let file_path = "./.changelog/data.json";
+    let file_path = String::from(APP_DIRECTORY) + &String::from(APP_DB_NAME);
     let mut base = log_core::get_json();
     let mut records: Vec<Log> = base.app_current_logs;
 
@@ -120,7 +125,7 @@ fn new_record(string: String) {
 }
 
 fn update_record(index: Option<String>) {
-    let file_path = "./.changelog/data.json";
+    let file_path = String::from(APP_DIRECTORY) + &String::from(APP_DB_NAME);
     let mut base = log_core::get_json();
     let mut records: Vec<Log> = base.app_current_logs;
 
@@ -176,7 +181,7 @@ fn update_record(index: Option<String>) {
 }
 
 fn remove_record(index: Option<String>) {
-    let file_path = "./.changelog/data.json";
+    let file_path = String::from(APP_DIRECTORY) + &String::from(APP_DB_NAME);
     let mut base = log_core::get_json();
     let mut records: Vec<Log> = base.app_current_logs;
 
@@ -219,14 +224,14 @@ fn remove_record(index: Option<String>) {
 }
 
 fn build_report() {
-    let directory = String::from("./.changelog/reports");
+    let directory = String::from(APP_DIRECTORY) + &String::from(APP_DIRECTORY_REPORTS);
 
-    log_core::new_directory(directory).unwrap_or_else(|err| {
+    log_core::new_directory(&directory).unwrap_or_else(|err| {
         println!("Problem creating reports directory: {}", err);
     }) ;
 
     let base = log_core::get_json();
-    let file_path = format!("./.changelog/reports/{}.txt", &base.app_current_version);
+    let file_path = format!("{}{}.txt",&directory, &base.app_current_version);
     let mut logs_string = String::new();
 
     for item in &base.app_current_logs {
@@ -245,7 +250,7 @@ Changes of this version: {}",
 }
 
 fn release() {
-    let file_path = "./.changelog/data.json";
+    let file_path = String::from(APP_DIRECTORY) + &String::from(APP_DB_NAME);
     let base = log_core::get_json();
     let records: Vec<Log> = base.app_current_logs;
 
@@ -272,22 +277,15 @@ fn release() {
     });
 }
 
-// fn build_report_with_commits() {
-//     // get all versions data
-//     // format data
-//     // create or rewrite file
-//     // paste data to file
-// }
-
 fn build_report_with_version(version: String) {
-    let directory = String::from("./.changelog/reports");
+    let directory = String::from(APP_DIRECTORY) + &String::from(APP_DIRECTORY_REPORTS);
 
-    log_core::new_directory(directory).unwrap_or_else(|err| {
+    log_core::new_directory(&directory).unwrap_or_else(|err| {
         println!("Problem creating reports directory: {}", err);
     }) ;
 
     let base = log_core::get_json();
-    let file_path = format!("./.changelog/reports/{}.txt", &version);
+    let file_path = format!("{}{}.txt",&directory, &version);
     let previous_records = base.app_previous;
     let record = previous_records.get(&version).expect("No releases with this version found");
 
