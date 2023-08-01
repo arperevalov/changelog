@@ -167,8 +167,9 @@ fn update_record(index: Option<String>) {
         return;
     }
 
+    println!("Please provide new text for record\n");
+
     let input: String = Input::new()
-        .with_prompt("Please provide new text for record\n")
         .with_initial_text(&records[id].text)
         .interact_text().unwrap();
 
