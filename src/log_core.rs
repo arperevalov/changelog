@@ -80,7 +80,7 @@ pub fn read_file(path: &String) -> Result<String, Error> {
 }
 
 pub fn get_base() -> Base {
-    let base_path: String = String::from(APP_DIRECTORY) + &String::from(APP_DB_NAME);
+    let base_path: String = format!("{}{}", APP_DIRECTORY, APP_DB_NAME);
     let result = read_file(&base_path).expect("error");
     let data: Base = serde_json::from_str(&result).expect("Could not read JSON");
     data
