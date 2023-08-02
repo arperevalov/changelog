@@ -54,19 +54,9 @@ pub fn new_json(path: &String) -> Result<File, String> {
 pub fn write_initial_data(mut file: File) -> Result<(), String> {
     let data = b"{
     \"app_name\": \"app_name\",
-    \"app_current_version\": \"0.01\",
-    \"app_current_logs\": [
-        {
-            \"group\": 0,
-            \"text\": \"Rule of cool\"
-        }
-    ],
-    \"app_previous\": {
-        \"0.00\": {
-            \"logs\": [],
-            \"commits\": []
-        }
-    }
+    \"app_current_version\": \"0.00\",
+    \"app_current_logs\": [],
+    \"app_previous\": {}
 }";
 
     match file.write_all(data) {
