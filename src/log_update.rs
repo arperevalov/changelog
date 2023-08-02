@@ -1,4 +1,4 @@
-use dialoguer::{Select, theme::ColorfulTheme, console::Term, Input};
+use dialoguer::Input;
 
 use crate::{APP_DIRECTORY, APP_DB_NAME, log_core::{self, Log}};
 
@@ -11,7 +11,7 @@ pub fn run(index: Option<String>) {
         return println!("No records to update");
     }
 
-    let id:Result<usize, &str> = match index {
+    let id:Result<usize, String> = match index {
         Some(index) => {
             let id:usize = index.parse().expect("Give number");
             Ok(id)
@@ -25,14 +25,12 @@ pub fn run(index: Option<String>) {
                 values.push(text);
             }
 
-            let selection = Select::with_theme(&ColorfulTheme::default())
-                .items(&values)
-                .default(0)
-                .interact_on_opt(&Term::stderr()).unwrap();
+
+            let selection = log_core::set_select(values);
 
             match selection {
-                Some(index) => {Ok(index)},
-                None => {Err("User did not select anything")}
+                Ok(index) => {Ok(index)},
+                Err(error) => {Err(error)}
             }
         }
     };

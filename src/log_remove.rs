@@ -1,5 +1,3 @@
-use dialoguer::{Select, theme::ColorfulTheme, console::Term};
-
 use crate::{APP_DIRECTORY, APP_DB_NAME, log_core::{self, Log}};
 
 pub fn run(index: Option<String>) {
@@ -26,14 +24,11 @@ pub fn run(index: Option<String>) {
                 values.push(text);
             }
 
-            let selection = Select::with_theme(&ColorfulTheme::default())
-                .items(&values)
-                .default(0)
-                .interact_on_opt(&Term::stderr()).unwrap();
+            let selection = log_core::set_select(values);
 
             match selection {
-                Some(index) => {records.remove(index);},
-                None => println!("User did not select anything")
+                Ok(index) => {records.remove(index);},
+                Err(error) => println!("{}", error)
             }
         }
     }

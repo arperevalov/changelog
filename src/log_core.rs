@@ -1,6 +1,9 @@
 use std::collections::HashMap;
 use std::fs::{File, DirBuilder};
 use std::io::prelude::*;
+use dialoguer::Select;
+use dialoguer::console::Term;
+use dialoguer::theme::ColorfulTheme;
 use serde::{Deserialize, Serialize};
 use std::io::Error;
 
@@ -97,4 +100,21 @@ pub fn rewrite_file(path: String, data: Base) -> Result<(), String> {
             Err(String::from("Could not write new data."))
         }
     }
+}
+
+pub fn set_select(values: Vec<String>) -> Result<usize, String> {
+    let select = Select::with_theme(&ColorfulTheme::default())
+        .items(&values)
+        .default(0)
+        .interact_on_opt(&Term::stderr()).unwrap();
+
+    match select {
+        Some(index) => {
+            Ok(index)
+        },
+        None => {
+            Err(String::from("User did not select anything"))
+        }
+    }
+
 }
