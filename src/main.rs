@@ -8,6 +8,7 @@ mod log_update;
 mod log_remove;
 mod log_build;
 mod log_release;
+mod log_help;
 
 
 const APP_DIRECTORY: &str = "./.changelog/";
@@ -67,7 +68,10 @@ fn main() -> Result<(), String> {
         },
         "release" => {
             log_release::run()
-        }
+        },
+        "help" => {
+            log_help::run()
+        },
         &_ => {
         }
     }
