@@ -4,6 +4,32 @@ use crate::{APP_DIRECTORY, APP_DIRECTORY_REPORTS, log_core};
 
 
 pub fn run() {
+    let base = log_core::get_base();
+    let previous_versions = base.app_previous;
+
+    if previous_versions.len() == 0 {
+        return println!("No versions to build");
+    }
+
+    let mut values = vec![];
+
+    for item in &previous_versions {
+        let text = String::from(item.0);
+        values.push(text);
+    }
+
+    let selection = log_core::set_select(&values);
+
+    match selection {
+        Ok(index) => {
+            let version = String::from(&values[index]);
+            run_with_version(version)
+        },
+        Err(error) => println!("{}", error)
+    }
+}
+
+pub fn run_current() {
     let directory: String = format!("{}{}", APP_DIRECTORY, APP_DIRECTORY_REPORTS);
 
     log_core::new_directory(&directory).unwrap_or_else(|err| {

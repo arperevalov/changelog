@@ -24,7 +24,7 @@ pub fn run(index: Option<String>) {
                 values.push(text);
             }
 
-            let selection = log_core::set_select(values);
+            let selection = log_core::set_select(&values);
 
             match selection {
                 Ok(index) => {records.remove(index);},

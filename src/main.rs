@@ -53,7 +53,14 @@ fn main() -> Result<(), String> {
         "build" => {
             if args.len() > 2 {
                 let version = String::from(&args[2]);
-                log_build::run_with_version(version);
+                
+                if version == "--current" {
+                    println!("{}", version);
+                    log_build::run_current();    
+                } else {
+                    println!("{}", version);
+                    log_build::run_with_version(version);
+                }
             } else {
                 log_build::run()
             }

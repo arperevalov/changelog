@@ -26,7 +26,7 @@ pub fn run(index: Option<String>) {
             }
 
 
-            let selection = log_core::set_select(values);
+            let selection = log_core::set_select(&values);
 
             match selection {
                 Ok(index) => {Ok(index)},

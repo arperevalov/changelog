@@ -5,7 +5,7 @@ pub fn run() {
     let base = log_core::get_base();
     let records: Vec<Log> = base.app_current_logs;
 
-    log_build::run();
+    log_build::run_current();
 
     let mut commits = vec![];
     commits.push(String::from("some_string"));

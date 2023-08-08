@@ -92,7 +92,7 @@ pub fn rewrite_file(path: String, data: Base) -> Result<(), String> {
     }
 }
 
-pub fn set_select(values: Vec<String>) -> Result<usize, String> {
+pub fn set_select(values: &Vec<String>) -> Result<usize, String> {
     let select = Select::with_theme(&ColorfulTheme::default())
         .items(&values)
         .default(0)
