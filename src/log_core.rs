@@ -1,4 +1,5 @@
 use std::collections::HashMap;
+use std::fmt::format;
 use std::fs::{File, DirBuilder};
 use std::io::prelude::*;
 use dialoguer::Select;
@@ -50,15 +51,15 @@ pub fn new_json(path: &String) -> Result<File, String> {
     }
 }
 
-pub fn write_initial_data(mut file: File) -> Result<(), String> {
-    let data = b"{
-    \"app_name\": \"app_name\",
-    \"app_current_version\": \"0.00\",
-    \"app_current_logs\": [],
-    \"app_previous\": {}
-}";
+pub fn write_initial_data(mut file: File, name: String) -> Result<(), String> {
+    let data = format!("{{
+        \"app_name\": \"{}\",
+        \"app_current_version\": \"0.00\",
+        \"app_current_logs\": [],
+        \"app_previous\": {{}}
+    }}", name);
 
-    match file.write_all(data) {
+    match file.write_all(data.as_bytes()) {
         Ok(..) => Ok(()),
         Err(..) => Err(String::from("Could not write initial data."))
     }

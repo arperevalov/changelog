@@ -1,12 +1,11 @@
 use std::fs::{File, self};
 
+use dialoguer::Input;
+
 use crate::{APP_DIRECTORY, APP_DB_NAME, log_core, log_help};
 
 
 pub fn run() {
-    // TODO: ask if should work with git
-    // TODO: ask project name
-
     let directory = String::from(APP_DIRECTORY);
     let file_path: String = format!("{}{}", APP_DIRECTORY, APP_DB_NAME);
 
@@ -19,7 +18,15 @@ pub fn run() {
         File::open("/dev/null").expect("Failed to open /dev/null")
     });
 
-    log_core::write_initial_data(file).unwrap_or_else(|err| {
+    let mut name = String::new();
+
+    println!("What's the name of your project?");
+    let input: String = Input::new()
+        .interact_text().unwrap();
+
+    name = input;
+
+    log_core::write_initial_data(file, name).unwrap_or_else(|err| {
         println!("Problem writing file: {}", err);
     });
 
@@ -27,6 +34,6 @@ pub fn run() {
     let data = "/reports";
 
     fs::write(file_path, data).expect("Unable to write .gitignore");
-    
+
     log_help::run();
 }
