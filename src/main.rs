@@ -76,7 +76,5 @@ fn main() -> Result<(), String> {
         }
     }
 
-    // TODO: --help command
-
     Ok(())
 }

@@ -1,6 +1,6 @@
 use std::fs::{File, self};
 
-use crate::{APP_DIRECTORY, APP_DB_NAME, log_core};
+use crate::{APP_DIRECTORY, APP_DB_NAME, log_core, log_help};
 
 
 pub fn run() {
@@ -27,5 +27,6 @@ pub fn run() {
     let data = "/reports";
 
     fs::write(file_path, data).expect("Unable to write .gitignore");
-    // TODO: print instruction how to use after init
+    
+    log_help::run();
 }
