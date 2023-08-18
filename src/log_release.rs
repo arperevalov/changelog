@@ -1,5 +1,5 @@
 use crate::{APP_DIRECTORY, APP_DB_NAME, log_core::{self, Log, LogArchive, Base}, log_build};
-use chrono::{Utc};
+use chrono::Utc;
 
 pub fn run() {
     let file_path: String = format!("{}{}", APP_DIRECTORY, APP_DB_NAME);
