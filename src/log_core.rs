@@ -26,7 +26,6 @@ pub struct Log {
 #[derive(Serialize, Deserialize, Debug)]
 pub struct LogArchive {
     pub logs: Vec<Log>,
-    pub commits: Vec<String>,
 }
 
 pub fn new_directory(path: &String) -> Result<(), String> {

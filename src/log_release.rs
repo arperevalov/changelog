@@ -7,13 +7,10 @@ pub fn run() {
 
     log_build::run_current();
 
-    let mut commits = vec![];
-    commits.push(String::from("some_string"));
-
     let mut version:f64 = base.app_current_version.parse().expect("cannot parse app current version");
     version += 0.01;
 
-    let current_archive: LogArchive = LogArchive { logs: records, commits };
+    let current_archive: LogArchive = LogArchive { logs: records };
 
     let mut previous_records = base.app_previous;
     previous_records.insert(base.app_current_version, current_archive);

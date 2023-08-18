@@ -73,19 +73,11 @@ pub fn run_with_version(version: String) {
         logs_string = logs_string + "\n— " + &log.text;
     }
 
-    let mut commits_string = String::new();
-
-    for commit in &record.commits {
-        commits_string = commits_string + "\n— " + &commit;
-    }
-
     let report = format!(
 "{}, {}
 
-Changes of this version: {}
-
-With commits: {}", 
-    base.app_name, version, logs_string, commits_string);
+Changes of this version: {}", 
+    base.app_name, version, logs_string);
 
     let data = String::from(report);
 
