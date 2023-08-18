@@ -36,7 +36,7 @@ pub fn new_directory(path: &String) -> Result<(), String> {
         Err(..) => {
             match DirBuilder::new().create(&path) {
                 Ok(..) => Ok(()),
-                Err(..) => Err(String::from("Could not create directory. It may already exists!"))
+                Err(..) => Err(String::from("Could not create directory"))
             }
         }
     }
