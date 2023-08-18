@@ -1,5 +1,4 @@
 use std::collections::HashMap;
-use std::fmt::format;
 use std::fs::{File, DirBuilder};
 use std::io::prelude::*;
 use dialoguer::Select;

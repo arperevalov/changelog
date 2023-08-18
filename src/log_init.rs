@@ -21,10 +21,17 @@ pub fn run() {
     let mut name = String::new();
 
     println!("What's the name of your project?");
-    let input: String = Input::new()
-        .interact_text().unwrap();
 
-    name = input;
+    let input = Input::new().interact_text();
+
+    match input {
+        Ok(value) => {
+            name = value
+        },
+        Err(_error) => {
+            println!("You haven't typed anything. Value will be empty.")
+        }
+    }
 
     log_core::write_initial_data(file, name).unwrap_or_else(|err| {
         println!("Problem writing file: {}", err);
