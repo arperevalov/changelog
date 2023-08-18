@@ -42,6 +42,16 @@ pub fn new_directory(path: &String) -> Result<(), String> {
     }
 }
 
+pub fn _remove_directory(path: &String) -> Result<(), String> {
+    match std::fs::remove_dir(&path) {
+        Ok(..) => {
+            Ok(())
+        },
+        Err(..) => {
+            Err(String::from("Deletion error"))
+        }
+    }
+}
 
 pub fn new_json(path: &String) -> Result<File, String> {
     match File::create(path) {
@@ -106,4 +116,27 @@ pub fn set_select(values: &Vec<String>) -> Result<usize, String> {
         }
     }
 
+}
+
+#[test]
+fn test_new_directory() {
+    let path = String::from("./.testing_dir");
+    let result = new_directory(&path);
+
+    assert_eq!(result, Ok(()));
+
+    let remove = _remove_directory(&path);
+    
+    assert_eq!(remove, Ok(()));
+}
+
+#[test]
+fn test_existing_directory() {
+    let path = String::from("./.testing_dir");
+    
+    let result = new_directory(&path);
+    assert_eq!(result, Ok(()));
+
+    let result = new_directory(&path);
+    assert_eq!(result, Ok(()));
 }
