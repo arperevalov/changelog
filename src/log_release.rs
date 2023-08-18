@@ -1,4 +1,5 @@
 use crate::{APP_DIRECTORY, APP_DB_NAME, log_core::{self, Log, LogArchive, Base}, log_build};
+use chrono::{Utc};
 
 pub fn run() {
     let file_path: String = format!("{}{}", APP_DIRECTORY, APP_DB_NAME);
@@ -7,10 +8,12 @@ pub fn run() {
 
     log_build::run_current();
 
-    let mut version:f64 = base.app_current_version.parse().expect("cannot parse app current version");
+    let mut version:f64 = base.app_current_version.parse().expect("Сannot parse app current version");
     version += 0.01;
 
-    let current_archive: LogArchive = LogArchive { logs: records };
+    let date = Utc::now().to_string();
+
+    let current_archive: LogArchive = LogArchive { logs: records, date: date.to_string() };
 
     let mut previous_records = base.app_previous;
     previous_records.insert(base.app_current_version, current_archive);

@@ -67,6 +67,7 @@ pub fn run_with_version(version: String) {
     let previous_records = base.app_previous;
     let record = previous_records.get(&version).expect("No releases with this version found");
 
+    let date = &record.date;
     let mut logs_string = String::new();
 
     for log in &record.logs {
@@ -75,9 +76,10 @@ pub fn run_with_version(version: String) {
 
     let report = format!(
 "{}, {}
+Release date: {}
 
 Changes of this version: {}", 
-    base.app_name, version, logs_string);
+    base.app_name, version, date, logs_string);
 
     let data = String::from(report);
 
