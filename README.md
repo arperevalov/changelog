@@ -1,6 +1,15 @@
 # changelog
 Handle your application versions history.
 
+## Build
+At this moment, you can only use and set up the application by building it yourself. To do this, you should have Rust installed on your system. You can get Rust from the [official website](https://www.rust-lang.org/tools/install).
+
+To build the application, use the following command:
+`cargo build`
+
+You can also install the application on your system from its root folder with the command:
+`cargo install --path .`
+
 ## Commands
 
 ### `changelog init`
