@@ -64,7 +64,7 @@ pub fn new_json(path: &String) -> Result<File, String> {
 pub fn write_initial_data(mut file: File, name: String) -> Result<(), String> {
     let data = format!("{{
         \"app_name\": \"{}\",
-        \"app_current_version\": \"0.00\",
+        \"app_current_version\": \"0.0.0\",
         \"app_current_logs\": [],
         \"app_previous\": {{}}
     }}", name);
@@ -116,5 +116,38 @@ pub fn set_select(values: &Vec<String>) -> Result<usize, String> {
             Err(String::from("User did not select anything"))
         }
     }
+}
 
+pub fn increment_version(value: String, position: u8) -> String {
+    let expression = regex::Regex::new(r"\d{0,}").unwrap();
+
+    let mut versions = vec![];
+    for item in expression.captures_iter(&value) {
+        let version: u32 = item.get(0).unwrap().as_str().parse().expect("Version parsing went wrong");
+        versions.push(version);
+    };
+
+    let updated_version = match position {
+        0 => {
+            versions[0] = versions[0] + 1;
+            versions[1] = 0;
+            versions[2] = 0;
+            format!("{}.{}.{}", versions[0], versions[1], versions[2])
+        }
+        1 => {
+            versions[0] = versions[0];
+            versions[1] = versions[1] + 1;
+            versions[2] = 0;
+            format!("{}.{}.{}", versions[0], versions[1], versions[2])
+        }
+        2 => {
+            versions[0] = versions[0];
+            versions[1] = versions[1];
+            versions[2] = versions[2] + 1;
+            format!("{}.{}.{}", versions[0], versions[1], versions[2])
+        },
+        3_u8..=u8::MAX => {value}
+    };
+
+    String::from(updated_version)
 }
