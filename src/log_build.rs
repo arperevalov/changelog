@@ -18,7 +18,7 @@ pub fn run() {
         values.push(text);
     }
 
-    let selection = log_core::set_select(&values);
+    let selection = log_core::set_select(&values, log_core::SelectDefault::Empty);
 
     match selection {
         Ok(index) => {

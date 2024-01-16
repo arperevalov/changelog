@@ -29,6 +29,11 @@ pub struct LogArchive {
     pub date: String,
 }
 
+pub enum SelectDefault {
+    Empty,
+    Is(usize)
+}
+
 pub fn new_directory(path: &String) -> Result<(), String> {
     match std::fs::read_dir(&path) {
         Ok(..) => {
@@ -102,10 +107,19 @@ pub fn rewrite_file(path: String, data: Base) -> Result<(), String> {
     }
 }
 
-pub fn set_select(values: &Vec<String>) -> Result<usize, String> {
+pub fn set_select(values: &Vec<String>, default: SelectDefault) -> Result<usize, String> {
+    let default_value = match default {
+        SelectDefault::Is(value) => {
+            value
+        },
+        SelectDefault::Empty => {
+            0
+        }
+    };
+
     let select = Select::with_theme(&ColorfulTheme::default())
         .items(&values)
-        .default(0)
+        .default(default_value)
         .interact_on_opt(&Term::stderr()).unwrap();
 
     match select {
