@@ -1,4 +1,4 @@
-use crate::{APP_DIRECTORY, APP_DB_NAME, log_core::{self, Log, LogArchive, Base, increment_version}, log_build};
+use crate::{APP_DIRECTORY, APP_DB_NAME, log_core::{self, Log, LogArchive, Base, increment_version, Version}, log_build};
 use chrono::Utc;
 
 pub fn run() {
@@ -10,9 +10,9 @@ pub fn run() {
 
     println!("Please, select which version you want to update");
     let values = vec![
-        String::from("MAJOR"),
-        String::from("MINOR"),
-        String::from("PATCH"),
+        Version::Major.to_string(),
+        Version::Minor.to_string(),
+        Version::Patch.to_string(),
     ];
     let selection = log_core::set_select(&values, log_core::SelectDefault::Is(2));
 

@@ -6,6 +6,7 @@ use dialoguer::console::Term;
 use dialoguer::theme::ColorfulTheme;
 use serde::{Deserialize, Serialize};
 use std::io::Error;
+use std::fmt;
 
 use crate::{APP_DIRECTORY, APP_DB_NAME};
 
@@ -32,6 +33,20 @@ pub struct LogArchive {
 pub enum SelectDefault {
     Empty,
     Is(usize)
+}
+
+#[derive(Debug)]
+pub enum Version {
+    Major,
+    Minor,
+    Patch
+}
+impl fmt::Display for Version {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        // write!(f, "{:?}", self)
+        // or, alternatively:
+        fmt::Debug::fmt(self, f)
+    }
 }
 
 pub fn new_directory(path: &String) -> Result<(), String> {
