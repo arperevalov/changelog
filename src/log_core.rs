@@ -132,7 +132,7 @@ pub fn set_select(values: &Vec<String>, default: SelectDefault) -> Result<usize,
     }
 }
 
-pub fn increment_version(value: String, position: u8) -> String {
+pub fn increment_version(value: &String, position: u8) -> String {
     let expression = regex::Regex::new(r"\d{0,}").unwrap();
 
     let mut versions = vec![];
@@ -160,7 +160,7 @@ pub fn increment_version(value: String, position: u8) -> String {
             versions[2] = versions[2] + 1;
             format!("{}.{}.{}", versions[0], versions[1], versions[2])
         },
-        3_u8..=u8::MAX => {value}
+        3_u8..=u8::MAX => {value.to_string()}
     };
 
     String::from(updated_version)
