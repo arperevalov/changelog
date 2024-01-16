@@ -1,4 +1,4 @@
-use crate::{APP_DIRECTORY, APP_DB_NAME, log_core::{self, Log, LogArchive, Base}, log_build};
+use crate::{APP_DIRECTORY, APP_DB_NAME, log_core::{self, Log, LogArchive, Base, increment_version}, log_build};
 use chrono::Utc;
 
 pub fn run() {
@@ -8,8 +8,25 @@ pub fn run() {
 
     log_build::run_current();
 
-    let mut version:f64 = base.app_current_version.parse().expect("Сannot parse app current version");
-    version += 0.01;
+    println!("Please, select which version you want to update");
+    let values = vec![
+        String::from("MAJOR"),
+        String::from("MINOR"),
+        String::from("PATCH"),
+    ];
+    let selection = log_core::set_select(&values, log_core::SelectDefault::Is(2));
+
+    let position = match selection {
+        Ok(value) => {
+            value as u8
+        },
+        Err(error) => {
+            println!("{error}");
+            3
+        }
+    };
+
+    let version:String = increment_version(&base.app_current_version, position);
 
     let date = Utc::now().to_string();
 
@@ -21,7 +38,7 @@ pub fn run() {
     let new_base = Base {
         app_current_logs: vec![],
         app_name: base.app_name,
-        app_current_version: version.to_string(),
+        app_current_version: version,
         app_previous: previous_records
     };
 
