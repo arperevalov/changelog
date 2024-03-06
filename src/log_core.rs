@@ -142,17 +142,6 @@ pub fn new_directory(path: &String) -> Result<(), String> {
     }
 }
 
-pub fn _remove_directory(path: &String) -> Result<(), String> {
-    match std::fs::remove_dir(&path) {
-        Ok(..) => {
-            Ok(())
-        },
-        Err(..) => {
-            Err(String::from("Deletion error"))
-        }
-    }
-}
-
 pub fn set_select(values: &Vec<String>, default: SelectDefault) -> Result<usize, String> {
     let default_value = match default {
         SelectDefault::Is(value) => {
