@@ -1,4 +1,4 @@
-use crate::{log_build, log_core::{self, Base, Log, LogArchive, Version}, log_get};
+use crate::{log_build, log_core::{self, Base, Log, LogArchive, Version}};
 use chrono::Utc;
 
 pub fn run() {
