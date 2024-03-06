@@ -83,6 +83,7 @@ pub enum Version {
     Minor,
     Patch
 }
+
 impl fmt::Display for Version {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         // write!(f, "{:?}", self)
@@ -115,14 +116,6 @@ pub fn _remove_directory(path: &String) -> Result<(), String> {
         }
     }
 }
-
-pub fn new_json(path: &String) -> Result<File, String> {
-    match File::create(path) {
-        Ok(file) => Ok(file),
-        Err(..) => Err(String::from("Could not create file"))
-    }
-}
-
 
 pub fn set_select(values: &Vec<String>, default: SelectDefault) -> Result<usize, String> {
     let default_value = match default {
