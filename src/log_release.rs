@@ -1,9 +1,8 @@
-use crate::{log_core::{self, Log, LogArchive, Base, increment_version, Version}, log_build};
+use crate::{log_build, log_core::{self, Base, Log, LogArchive, Version}, log_get};
 use chrono::Utc;
 
 pub fn run() {
     let mut base = Base::get();
-    let records: Vec<Log> = base.app_current_logs;
 
     log_build::run_current();
 
@@ -25,17 +24,16 @@ pub fn run() {
         }
     };
 
-    let version:String = increment_version(&base.app_current_version, position);
-
+    let records: Vec<Log> = base.app_current_logs.clone();
     let date = Utc::now().to_string();
 
     let current_archive: LogArchive = LogArchive { logs: records, date: date.to_string() };
 
-    let mut previous_records = base.app_previous;
-    previous_records.insert(base.app_current_version, current_archive);
+    let mut previous_records = base.app_previous.clone();
+    previous_records.insert(base.app_current_version.clone(), current_archive);
 
+    base.increment_version(position).expect("Cannot increment app version");
     base.app_current_logs = vec![];
-    base.app_current_version = version;
     base.app_previous = previous_records;
 
     base.write().unwrap_or_else(|err| {
