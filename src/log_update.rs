@@ -1,10 +1,9 @@
 use dialoguer::Input;
 
-use crate::{APP_DIRECTORY, APP_DB_NAME, log_core::{self, Log}};
+use crate::log_core::{self, Base, Log};
 
 pub fn run(index: Option<String>) {
-    let file_path: String = format!("{}{}", APP_DIRECTORY, APP_DB_NAME);
-    let mut base = log_core::get_base();
+    let mut base = Base::get();
     let mut records: Vec<Log> = base.app_current_logs;
 
     if records.len() == 0 {
@@ -52,7 +51,7 @@ pub fn run(index: Option<String>) {
 
     base.app_current_logs = records;
 
-    log_core::rewrite_file(file_path, base).unwrap_or_else(|err| {
+    base.write().unwrap_or_else(|err| {
         println!("Problem writing a file: {}", err);
     });
 }

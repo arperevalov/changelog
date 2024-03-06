@@ -1,7 +1,7 @@
-use crate::log_core::{self, Log};
+use crate::log_core::{Base, Log};
 
 pub fn run () {
-    let base = log_core::get_base();
+    let base = Base::get();
     let logs: Vec<Log> = base.app_current_logs;
     
     if logs.len() == 0 {

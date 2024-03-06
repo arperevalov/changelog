@@ -2,7 +2,7 @@ use std::fs::{File, self};
 
 use dialoguer::Input;
 
-use crate::{APP_DIRECTORY, APP_DB_NAME, log_core, log_help};
+use crate::{log_core::{self, Base}, log_help, APP_DB_NAME, APP_DIRECTORY};
 
 
 pub fn run() {
@@ -33,7 +33,9 @@ pub fn run() {
         }
     }
 
-    log_core::write_initial_data(file, name).unwrap_or_else(|err| {
+    let base = Base::from(name);
+    
+    base.write().unwrap_or_else(|err| {
         println!("Problem writing file: {}", err);
     });
 

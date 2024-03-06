@@ -1,10 +1,10 @@
 use std::fs;
 
-use crate::{APP_DIRECTORY, APP_DIRECTORY_REPORTS, log_core};
+use crate::{log_core::{self, Base}, APP_DIRECTORY, APP_DIRECTORY_REPORTS};
 
 
 pub fn run() {
-    let base = log_core::get_base();
+    let base = Base::get();
     let previous_versions = base.app_previous;
 
     if previous_versions.len() == 0 {
@@ -36,7 +36,7 @@ pub fn run_current() {
         println!("Problem creating reports directory: {}", err);
     }) ;
 
-    let base = log_core::get_base();
+    let base = Base::get();
     let file_path = format!("{}{}.txt",&directory, &base.app_current_version);
     let mut logs_string = String::new();
 
@@ -62,7 +62,7 @@ pub fn run_with_version(version: String) {
         println!("Problem creating reports directory: {}", err);
     }) ;
 
-    let base = log_core::get_base();
+    let base = Base::get();
     let file_path = format!("{}{}.txt",&directory, &version);
     let previous_records = base.app_previous;
     let record = previous_records.get(&version).expect("No releases with this version found");

@@ -1,9 +1,8 @@
-use crate::{APP_DIRECTORY, APP_DB_NAME, log_core::{self, Log, LogArchive, Base, increment_version, Version}, log_build};
+use crate::{log_core::{self, Log, LogArchive, Base, increment_version, Version}, log_build};
 use chrono::Utc;
 
 pub fn run() {
-    let file_path: String = format!("{}{}", APP_DIRECTORY, APP_DB_NAME);
-    let base = log_core::get_base();
+    let mut base = Base::get();
     let records: Vec<Log> = base.app_current_logs;
 
     log_build::run_current();
@@ -35,14 +34,11 @@ pub fn run() {
     let mut previous_records = base.app_previous;
     previous_records.insert(base.app_current_version, current_archive);
 
-    let new_base = Base {
-        app_current_logs: vec![],
-        app_name: base.app_name,
-        app_current_version: version,
-        app_previous: previous_records
-    };
+    base.app_current_logs = vec![];
+    base.app_current_version = version;
+    base.app_previous = previous_records;
 
-    log_core::rewrite_file(file_path, new_base).unwrap_or_else(|err| {
+    base.write().unwrap_or_else(|err| {
         println!("Problem writing a file: {}", err);
     });
 }

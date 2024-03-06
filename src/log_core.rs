@@ -18,6 +18,48 @@ pub struct Base {
     pub app_previous: HashMap<String, LogArchive>
 }
 
+impl Base {
+    fn get_filepath () -> String {
+        format!("{}{}", APP_DIRECTORY, APP_DB_NAME)
+    }
+
+    fn read_file(path: &String) -> Result<String, Error> {
+        let mut file = File::open(path)?;
+        let mut data = String::new();
+        file.read_to_string(&mut data)?;
+        Ok(data)
+    }
+
+    pub fn from(app_name: String) -> Base {
+        Base {
+            app_name,
+            app_current_version: String::from("0.0.0"),
+            app_current_logs: vec![],
+            app_previous: HashMap::new(),
+        }
+    }
+
+    pub fn get() -> Base {
+        let base_path: String = Base::get_filepath();
+        let result = Base::read_file(&base_path).expect("error");
+        let data: Base = serde_json::from_str(&result).expect("Could not read JSON");
+        data
+    }
+
+    pub fn write(self) -> Result<(), String> {
+        let file = File::create(Base::get_filepath()).expect("something");
+
+        match serde_json::to_writer_pretty(file, &self) {
+            Ok(..) => Ok(()),
+            Err(error) => {
+                
+        println!("{:#?}", error);
+                Err(String::from("Could not write new data."))
+            }
+        }
+    }
+}
+
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Log {
     pub group: u64,
@@ -81,46 +123,6 @@ pub fn new_json(path: &String) -> Result<File, String> {
     }
 }
 
-pub fn write_initial_data(mut file: File, name: String) -> Result<(), String> {
-    let data = format!("{{
-        \"app_name\": \"{}\",
-        \"app_current_version\": \"0.0.0\",
-        \"app_current_logs\": [],
-        \"app_previous\": {{}}
-    }}", name);
-
-    match file.write_all(data.as_bytes()) {
-        Ok(..) => Ok(()),
-        Err(..) => Err(String::from("Could not write initial data."))
-    }
-}
-
-pub fn read_file(path: &String) -> Result<String, Error> {
-    let mut file = File::open(path)?;
-    let mut data = String::new();
-    file.read_to_string(&mut data)?;
-    Ok(data)
-}
-
-pub fn get_base() -> Base {
-    let base_path: String = format!("{}{}", APP_DIRECTORY, APP_DB_NAME);
-    let result = read_file(&base_path).expect("error");
-    let data: Base = serde_json::from_str(&result).expect("Could not read JSON");
-    data
-}
-
-pub fn rewrite_file(path: String, data: Base) -> Result<(), String> {
-    let file = File::create(path).expect("something");
-
-    match serde_json::to_writer_pretty(file, &data) {
-        Ok(..) => Ok(()),
-        Err(error) => {
-            
-    println!("{:#?}", error);
-            Err(String::from("Could not write new data."))
-        }
-    }
-}
 
 pub fn set_select(values: &Vec<String>, default: SelectDefault) -> Result<usize, String> {
     let default_value = match default {
