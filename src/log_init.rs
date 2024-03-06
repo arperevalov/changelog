@@ -1,22 +1,16 @@
-use std::fs::{File, self};
+use std::fs;
 
 use dialoguer::Input;
 
-use crate::{log_core::{self, Base}, log_help, APP_DB_NAME, APP_DIRECTORY};
+use crate::{log_core::{self, Base}, log_help, APP_DIRECTORY};
 
 
 pub fn run() {
     let directory = String::from(APP_DIRECTORY);
-    let file_path: String = format!("{}{}", APP_DIRECTORY, APP_DB_NAME);
 
     log_core::new_directory(&directory).unwrap_or_else(|err| {
         println!("Problem creating directory: {}", err);
     }) ;
-
-    let file = log_core::new_json(&file_path).unwrap_or_else(|err| {
-        println!("Problem creating file: {}", err);
-        File::open("/dev/null").expect("Failed to open /dev/null")
-    });
 
     let mut name = String::new();
 
