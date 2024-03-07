@@ -2,12 +2,19 @@ use dialoguer::Input;
 
 use crate::log_core::{self, Base, Log};
 
-pub fn run(index: Option<String>) {
-    let mut base = Base::get();
+pub fn run(index: Option<String>) -> Result<(), String> {
+    let mut base = match Base::get() {
+        Ok(value) => value,
+        Err(value) => {
+            let string = value.to_string();
+            return Err(string);
+        }
+    };
     let mut records: Vec<Log> = base.app_current_logs;
 
     if records.len() == 0 {
-        return println!("No records to update");
+        let error = format!("No records to update");
+        return Err(error);
     }
 
     let id:Result<usize, String> = match index {
@@ -37,8 +44,8 @@ pub fn run(index: Option<String>) {
     let id = id.unwrap();
 
     if records.len() <= id {
-        println!("There are no records with id of {}", id);
-        return;
+        let error = format!("There are no records with id of {}", id);
+        return Err(error);
     }
 
     println!("Please provide new text for record\n");
@@ -54,4 +61,6 @@ pub fn run(index: Option<String>) {
     base.write().unwrap_or_else(|err| {
         println!("Problem writing a file: {}", err);
     });
+
+    Ok(())
 }

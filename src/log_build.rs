@@ -3,12 +3,19 @@ use std::fs;
 use crate::{log_core::{self, Base}, APP_DIRECTORY, APP_DIRECTORY_REPORTS};
 
 
-pub fn run() {
-    let base = Base::get();
+pub fn run() -> Result<(), String> {
+    let base = match Base::get() {
+        Ok(value) => value,
+        Err(value) => {
+            let string = value.to_string();
+            return Err(string);
+        }
+    };
     let previous_versions = base.app_previous;
 
     if previous_versions.len() == 0 {
-        return println!("No versions to build");
+        let error = String::from("No versions to build");
+        return Err(error);
     }
 
     let mut values = vec![];
@@ -23,20 +30,28 @@ pub fn run() {
     match selection {
         Ok(index) => {
             let version = String::from(&values[index]);
-            run_with_version(version)
+            return run_with_version(version);
         },
         Err(error) => println!("{}", error)
     }
+
+    Ok(())
 }
 
-pub fn run_current() {
+pub fn run_current() -> Result<(), String> {
     let directory: String = format!("{}{}", APP_DIRECTORY, APP_DIRECTORY_REPORTS);
 
     log_core::new_directory(&directory).unwrap_or_else(|err| {
         println!("Problem creating reports directory: {}", err);
     }) ;
 
-    let base = Base::get();
+    let base = match Base::get() {
+        Ok(value) => value,
+        Err(value) => {
+            let string = value.to_string();
+            return Err(string);
+        }
+    };
     let file_path = format!("{}{}.txt",&directory, &base.app_current_version);
     let mut logs_string = String::new();
 
@@ -53,16 +68,23 @@ Changes of this version: {}",
     let data = String::from(report);
 
     fs::write(file_path, data).expect("Unable to write file");
+    Ok(())
 }
 
-pub fn run_with_version(version: String) {
+pub fn run_with_version(version: String) -> Result<(), String> {
     let directory: String = format!("{}{}", APP_DIRECTORY, APP_DIRECTORY_REPORTS);
 
     log_core::new_directory(&directory).unwrap_or_else(|err| {
         println!("Problem creating reports directory: {}", err);
     }) ;
 
-    let base = Base::get();
+    let base = match Base::get() {
+        Ok(value) => value,
+        Err(value) => {
+            let string = value.to_string();
+            return Err(string);
+        }
+    };
     let file_path = format!("{}{}.txt",&directory, &version);
     let previous_records = base.app_previous;
     let record = previous_records.get(&version).expect("No releases with this version found");
@@ -84,4 +106,6 @@ Changes of this version: {}",
     let data = String::from(report);
 
     fs::write(file_path, data).expect("Unable to write file");
+
+    Ok(())
 }

@@ -1,6 +1,7 @@
 use std::collections::HashMap;
 use std::fs::{File, DirBuilder};
 use std::io::prelude::*;
+use std::process;
 use dialoguer::Select;
 use dialoguer::console::Term;
 use dialoguer::theme::ColorfulTheme;
@@ -39,11 +40,18 @@ impl Base {
         }
     }
 
-    pub fn get() -> Base {
+    pub fn get() -> Result<Base, Error> {
         let base_path: String = Base::get_filepath();
-        let result = Base::read_file(&base_path).expect("error");
-        let data: Base = serde_json::from_str(&result).expect("Could not read JSON");
-        data
+        let result = Base::read_file(&base_path).unwrap_or_else(|_| {
+            println!("Could not read file at: {}", base_path);
+            process::exit(1)
+        });
+        let data: Base = serde_json::from_str(&result).unwrap_or_else(|_| {
+            println!("Could not read JSON at: {}", base_path);
+            process::exit(1)
+        });
+
+        Ok(data)
     }
 
     pub fn write(self) -> Result<(), String> {

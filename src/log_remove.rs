@@ -1,11 +1,18 @@
 use crate::log_core::{self, Base, Log};
 
-pub fn run(index: Option<String>) {
-    let mut base = Base::get();
+pub fn run(index: Option<String>) -> Result<(), String> {
+    let mut base = match Base::get() {
+        Ok(value) => value,
+        Err(value) => {
+            let string = value.to_string();
+            return Err(string);
+        }
+    };
     let mut records: Vec<Log> = base.app_current_logs;
 
     if records.len() == 0 {
-        return println!("No records to remove");
+        let error = format!("No records to remove");
+        return Err(error);
     }
 
     match index {
@@ -37,4 +44,6 @@ pub fn run(index: Option<String>) {
     base.write().unwrap_or_else(|err| {
         println!("Problem writing a file: {}", err);
     });
+
+    Ok(())
 }

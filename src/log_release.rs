@@ -1,10 +1,22 @@
 use crate::{log_build, log_core::{self, Base, Log, LogArchive, Version}};
 use chrono::Utc;
 
-pub fn run() {
-    let mut base = Base::get();
+pub fn run() -> Result<(), String> {
+    let mut base = match Base::get() {
+        Ok(value) => value,
+        Err(value) => {
+            let string = value.to_string();
+            return Err(string);
+        }
+    };
 
-    log_build::run_current();
+    match log_build::run_current() {
+        Ok(value) => value,
+        Err(value) => {
+            let string = value.to_string();
+            return Err(string);
+        }
+    };
 
     println!("Please, select which version you want to update");
     let values = vec![
@@ -39,4 +51,6 @@ pub fn run() {
     base.write().unwrap_or_else(|err| {
         println!("Problem writing a file: {}", err);
     });
+
+    Ok(())
 }

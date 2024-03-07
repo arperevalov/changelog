@@ -5,12 +5,16 @@ use dialoguer::Input;
 use crate::{log_core::{self, Base}, log_help, APP_DIRECTORY};
 
 
-pub fn run() {
+pub fn run() -> Result<(), String> {
     let directory = String::from(APP_DIRECTORY);
 
-    log_core::new_directory(&directory).unwrap_or_else(|err| {
-        println!("Problem creating directory: {}", err);
-    }) ;
+    match log_core::new_directory(&directory) {
+        Ok(value) => {value},
+        Err(value) => {
+            let error = format!("Problem creating directory: {}", value);
+            return Err(error);
+        }
+    };
 
     let mut name = String::new();
 
@@ -39,4 +43,5 @@ pub fn run() {
     fs::write(file_path, data).expect("Unable to write .gitignore");
 
     log_help::run();
+    Ok(())
 }
